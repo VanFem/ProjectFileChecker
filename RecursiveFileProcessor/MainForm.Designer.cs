@@ -184,7 +184,7 @@
             this.txtIgnoredExceptions.Name = "txtIgnoredExceptions";
             this.txtIgnoredExceptions.Size = new System.Drawing.Size(259, 20);
             this.txtIgnoredExceptions.TabIndex = 12;
-            this.txtIgnoredExceptions.Text = "Designer.cs";
+            this.txtIgnoredExceptions.Text = "designer.cs,";
             // 
             // label4
             // 
