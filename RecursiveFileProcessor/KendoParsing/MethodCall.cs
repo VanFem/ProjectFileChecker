@@ -8,7 +8,7 @@ namespace RecursiveFileProcessor.KendoParsing
 {
     public class MethodCall : MethodCallBase
     {
-        public string MethodName;
+        public string MethodName { get; set; }
         public List<ArgumentBase> Arguments { get; private set; }
 
         public MethodCall()
@@ -18,6 +18,8 @@ namespace RecursiveFileProcessor.KendoParsing
 
         public override string ToString()
         {
+            if (string.IsNullOrEmpty(MethodName)) return string.Empty;
+
             var builder = new StringBuilder(MethodName);
             builder.Append("(");
             if (Arguments.Count != 0)

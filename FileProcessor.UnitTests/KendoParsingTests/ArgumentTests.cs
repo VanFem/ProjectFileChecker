@@ -14,9 +14,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         [Test]
         public void Argument_Assigned_ToStringReturnsArgument()
         {
-            var arg = new StringArgument();
-            
-            arg.ArgName = "argTestName";
+            var arg = new StringArgument("argTestName");
 
             Assert.AreEqual("argTestName", arg.ToString());
         }
