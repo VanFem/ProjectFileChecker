@@ -45,6 +45,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileProcessor.cs" />
+    <Compile Include="KendoParsing\StringArgument.cs" />
+    <Compile Include="KendoParsing\ArgumentBase.cs" />
+    <Compile Include="KendoParsing\LambdaTypeArgument.cs" />
+    <Compile Include="KendoParsing\LambdaMethodBody.cs" />
+    <Compile Include="KendoParsing\MethodBody.cs" />
+    <Compile Include="KendoParsing\MethodBodyBase.cs" />
+    <Compile Include="KendoParsing\MethodCall.cs" />
+    <Compile Include="KendoParsing\MethodCallBase.cs" />
+    <Compile Include="KendoParsing\Statement.cs" />
+    <Compile Include="KendoParsing\StatementBase.cs" />
+    <Compile Include="KendoParsing\StringStatement.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
