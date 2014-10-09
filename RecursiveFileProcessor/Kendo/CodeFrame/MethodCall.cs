@@ -1,24 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace RecursiveFileProcessor.KendoParsing
+namespace RecursiveFileProcessor.Kendo.CodeFrame
 {
     public class MethodCall : MethodCallBase
     {
         public string MethodName { get; set; }
-        public List<ArgumentBase> Arguments { get; private set; }
+        public List<IArgumentBase> Arguments { get; private set; }
+        public bool IsProperty { get; set; }
 
         public MethodCall()
         {
-            Arguments = new List<ArgumentBase>();
+            Arguments = new List<IArgumentBase>();
+            IsProperty = false;
         }
 
         public override string ToString()
         {
             if (string.IsNullOrEmpty(MethodName)) return string.Empty;
+            
+            if (IsProperty) return MethodName;
 
             var builder = new StringBuilder(MethodName);
             builder.Append("(");

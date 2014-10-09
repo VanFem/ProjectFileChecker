@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RecursiveFileProcessor.KendoParsing
+namespace RecursiveFileProcessor.Kendo.CodeFrame
 {
     public class MethodBody : MethodBodyBase
     {
-        public List<StatementBase> Statements;
+
+        public Statement this[string val]
+        {
+            get { return Statements.FirstOrDefault(st => st.Obj == val); }
+        }
+
+        public List<Statement> Statements;
         public bool IsLambda { get; set; }
 
         public MethodBody(bool isLambda)
         {
-            Statements = new List<StatementBase>();
+            Statements = new List<Statement>();
             IsLambda = isLambda;
         }
 

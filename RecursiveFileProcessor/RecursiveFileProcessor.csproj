@@ -45,17 +45,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileProcessor.cs" />
-    <Compile Include="KendoParsing\StringArgument.cs" />
-    <Compile Include="KendoParsing\ArgumentBase.cs" />
-    <Compile Include="KendoParsing\LambdaTypeArgument.cs" />
-    <Compile Include="KendoParsing\LambdaMethodBody.cs" />
-    <Compile Include="KendoParsing\MethodBody.cs" />
-    <Compile Include="KendoParsing\MethodBodyBase.cs" />
-    <Compile Include="KendoParsing\MethodCall.cs" />
-    <Compile Include="KendoParsing\MethodCallBase.cs" />
-    <Compile Include="KendoParsing\Statement.cs" />
-    <Compile Include="KendoParsing\StatementBase.cs" />
-    <Compile Include="KendoParsing\StringStatement.cs" />
+    <Compile Include="Kendo\CodeFrame\IStatement.cs" />
+    <Compile Include="Kendo\CodeFrame\StatementTypeArgument.cs" />
+    <Compile Include="Kendo\CodeFrame\StringArgument.cs" />
+    <Compile Include="Kendo\CodeFrame\IArgumentBase.cs" />
+    <Compile Include="Kendo\CodeFrame\LambdaTypeArgument.cs" />
+    <Compile Include="Kendo\CodeFrame\LambdaMethodBody.cs" />
+    <Compile Include="Kendo\CodeFrame\MethodBody.cs" />
+    <Compile Include="Kendo\CodeFrame\MethodBodyBase.cs" />
+    <Compile Include="Kendo\CodeFrame\MethodCall.cs" />
+    <Compile Include="Kendo\CodeFrame\MethodCallBase.cs" />
+    <Compile Include="Kendo\CodeFrame\Statement.cs" />
+    <Compile Include="Kendo\CodeFrame\IMethodStatement.cs" />
+    <Compile Include="Kendo\CodeFrame\StringStatement.cs" />
+    <Compile Include="Kendo\Parser\CodeParser.cs" />
+    <Compile Include="Kendo\Parser\ParserBase.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,7 +107,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Kendo\MigrateTelerikToKendo\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -49,6 +49,7 @@
     <Compile Include="KendoParsingTests\LambdaTypeArgumentTests.cs" />
     <Compile Include="KendoParsingTests\MethodBodyTests.cs" />
     <Compile Include="KendoParsingTests\MethodCallTests.cs" />
+    <Compile Include="KendoParsingTests\ParserTests.cs" />
     <Compile Include="KendoParsingTests\StatementTest.cs" />
   </ItemGroup>
   <ItemGroup>

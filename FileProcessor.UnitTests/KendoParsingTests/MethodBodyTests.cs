@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using NUnit.Framework;
-using RecursiveFileProcessor.KendoParsing;
+using RecursiveFileProcessor.Kendo.CodeFrame;
 
 namespace FileProcessor.UnitTests.KendoParsingTests
 {
@@ -19,63 +14,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
             
             Assert.AreEqual("{}", mb.ToString());
         }
-        
-        [Test]
-        public void MethodBody_OneStatementNoLambda_TerminatedBySemicolonAndHasSquigglyBrackets()
-        {
-            var mb = new MethodBody(false);
-
-            mb.Statements.Add(new StringStatement("code"));
-            
-            Assert.AreEqual(@"{
-code;
-}", mb.ToString());
-        }
-
-        [Test]
-        public void MethodBody_OneStatementLambda_NoSquigglyBracketsOrSemicolons()
-        {
-            var mb = new MethodBody(true);
-
-            mb.Statements.Add(new StringStatement("code"));
-
-            Assert.AreEqual("code", mb.ToString());
-        }
-
-        [Test]
-        public void MethodBody_MultipleStatementsLambda_SquigglyBracketsAndSemicolons()
-        {
-            var mb = new MethodBody(true);
-
-            mb.Statements.Add(new StringStatement("code"));
-            mb.Statements.Add(new StringStatement("more code"));
-            mb.Statements.Add(new StringStatement("even more code"));
-
-            Assert.AreEqual(@"{
-code;
-more code;
-even more code;
-}"
-                , mb.ToString());
-        }
-
-        [Test]
-        public void MethodBody_MultipleStatementsNotLambda_SquigglyBracketsAndSemicolons()
-        {
-            var mb = new MethodBody(false);
-
-            mb.Statements.Add(new StringStatement("code"));
-            mb.Statements.Add(new StringStatement("more code"));
-            mb.Statements.Add(new StringStatement("even more code"));
-
-            Assert.AreEqual(@"{
-code;
-more code;
-even more code;
-}"
-                , mb.ToString());
-        }
-
+       
         [Test]
         public void MethodBody_ComplicatedStatementsNotLambda_ProperStringReturned()
         {

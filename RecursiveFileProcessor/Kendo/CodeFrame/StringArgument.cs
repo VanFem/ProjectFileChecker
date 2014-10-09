@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RecursiveFileProcessor.KendoParsing
+﻿namespace RecursiveFileProcessor.Kendo.CodeFrame
 {
-    public class StringArgument : ArgumentBase
+    public class StringArgument : IArgumentBase
     {
         public string ArgName { get; set; }
 

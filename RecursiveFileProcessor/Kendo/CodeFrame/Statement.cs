@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace RecursiveFileProcessor.KendoParsing
+namespace RecursiveFileProcessor.Kendo.CodeFrame
 {
-    public class Statement : StatementBase
+    public class Statement : IMethodStatement
     {
         public string Obj { get; set; }
+
+        public MethodCall this[string val]
+        {
+            get { return MethodCalls.FirstOrDefault(m => m.MethodName == val); }
+        }
         public List<MethodCall> MethodCalls { get; private set; }
 
         public Statement()

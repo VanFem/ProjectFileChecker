@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RecursiveFileProcessor.KendoParsing
+namespace RecursiveFileProcessor.Kendo.CodeFrame
 {
-    public class LambdaTypeArgument : ArgumentBase
+    public class LambdaTypeArgument : IArgumentBase
     {
         private const string LambdaFormatString = "{0} => {1}";
         public List<string> LambdaArguments { get; private set; }
