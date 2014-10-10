@@ -97,6 +97,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
             var migration3 = new OperationModeRemake();
             var migration4 = new CRUDRename();
             var migration5 = new ClientEventsRemake();
+            var migration6 = new PagerSettingsMovement();
             
             var logger = new Logger();
 
@@ -105,7 +106,9 @@ namespace FileProcessor.UnitTests.KendoParsingTests
             migration2.ApplyTo(parser.Code.Statements[0], logger);
             migration3.ApplyTo(parser.Code.Statements[0], logger);
             migration5.ApplyTo(parser.Code.Statements[0], logger);
-            
+            migration6.ApplyTo(parser.Code.Statements[0], logger);
+
+            parser.Code.PostfixComment = "kaban";
 
 
             Debug.WriteLine("=====AFTER=====\r\n");

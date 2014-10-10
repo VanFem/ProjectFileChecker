@@ -35,6 +35,8 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
         public static string OnErrorMethod = "OnError";
         public static string ErrorMethod = "Error";
         public static string EventsParamName = "events";
+        public static string Pageable = "Pageable";
+        public static string TotalMethod = "Total";
 
         public static string ClientOperationModeEnumName = "GridOperationMode.Client";
         public static string ServerOperationModeEnumName = "GridOperationMode.Server";

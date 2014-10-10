@@ -66,6 +66,7 @@
     <Compile Include="Kendo\MigrateTelerikGridToKendo\DataKeysMovement.cs" />
     <Compile Include="Kendo\MigrateTelerikGridToKendo\DataSourceCreator.cs" />
     <Compile Include="Kendo\MigrateTelerikGridToKendo\OperationModeRemake.cs" />
+    <Compile Include="Kendo\MigrateTelerikGridToKendo\PagerSettingsMovement.cs" />
     <Compile Include="Kendo\Migration\Migration.cs" />
     <Compile Include="Kendo\Migration\MigrationException.cs" />
     <Compile Include="Kendo\Migration\IMigrationRule.cs" />
