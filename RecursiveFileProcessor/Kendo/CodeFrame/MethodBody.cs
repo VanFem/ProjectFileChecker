@@ -25,11 +25,12 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
         public override string ToString()
         {
             if (Statements.Count == 0) return "{}";
-            var body = Statements.Select(st => st.ToString())
-                .Aggregate((working, next) => working + ";" + Environment.NewLine + next);
+            Statements.ForEach(st => st.Indent = Indent + ((Statements.Count > 1 && !IsLambda) ? 1 : 0));
+            var body = Indenter.GetIndented((Statements.Count > 1) ?  Indent : 0, Statements.Select(st => st.ToString())
+                .Aggregate((working, next) => working + ";" + Environment.NewLine + Indenter.GetIndented(Indent, next)));
             if (!IsLambda || Statements.Count > 1)
             {
-                body = "{"+Environment.NewLine + body + ";"+Environment.NewLine+"}";
+                body = "{"+Environment.NewLine + body + ";"+ Environment.NewLine + Indenter.GetIndented((Indent == 0 ? 0 : (Indent - 1)), "}");
             }
 
             return body;

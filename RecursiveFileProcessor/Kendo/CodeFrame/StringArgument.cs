@@ -13,5 +13,7 @@
         {
             return ArgName;
         }
+
+        public int Indent { get; set; }
     }
 }

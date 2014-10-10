@@ -9,6 +9,7 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
         public string MethodName { get; set; }
         public List<IArgumentBase> Arguments { get; private set; }
         public bool IsProperty { get; set; }
+        public int Indent { get; set; }
 
 
         public MethodCall() : this(string.Empty, false)
@@ -31,6 +32,7 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
             if (string.IsNullOrEmpty(MethodName)) return string.Empty;
             
             if (IsProperty) return MethodName;
+            Arguments.ForEach(arg => arg.Indent = Indent + 1);
 
             var builder = new StringBuilder(MethodName);
             builder.Append("(");

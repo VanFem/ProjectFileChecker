@@ -59,8 +59,13 @@
     <Compile Include="Kendo\CodeFrame\IMethodStatement.cs" />
     <Compile Include="Kendo\CodeFrame\StringStatement.cs" />
     <Compile Include="Kendo\Logger.cs" />
+    <Compile Include="Kendo\MigrateTelerikGridToKendo\ClientEventsRemake.cs" />
     <Compile Include="Kendo\MigrateTelerikGridToKendo\Consts.cs" />
+    <Compile Include="Kendo\MigrateTelerikGridToKendo\CRUDRename.cs" />
+    <Compile Include="Kendo\MigrateTelerikGridToKendo\DataBindingMovement.cs" />
     <Compile Include="Kendo\MigrateTelerikGridToKendo\DataKeysMovement.cs" />
+    <Compile Include="Kendo\MigrateTelerikGridToKendo\DataSourceCreator.cs" />
+    <Compile Include="Kendo\MigrateTelerikGridToKendo\OperationModeRemake.cs" />
     <Compile Include="Kendo\Migration\Migration.cs" />
     <Compile Include="Kendo\Migration\MigrationException.cs" />
     <Compile Include="Kendo\Migration\IMigrationRule.cs" />

@@ -24,9 +24,12 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
             {
                 strBuilder.Insert(0, "new ");
             }
+            ArgumentStatement.Indent = Indent + 1;
             strBuilder.Append(ArgumentStatement);
             return strBuilder.ToString();
             
         }
+
+        public int Indent { get; set; }
     }
 }

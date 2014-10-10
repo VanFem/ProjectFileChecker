@@ -107,11 +107,11 @@ namespace RecursiveFileProcessor.Kendo.Parser
         public string ReadObjectName(IMethodStatement st, bool inSingleStatement)
         {
             var objNameBuilder = new StringBuilder();
-            char c;
             bool splitObject = false;
             bool inString = false, inChar = false, nextCharEscaped = false;
             SkipWhitespace();
-            while (((c = ParseNextChar()) != ';') && (!inSingleStatement || (c != ',' && c != ')')))
+            char c = ParseNextChar();
+            while ((c != ';') && (!inSingleStatement || (c != ',' && c != ')')) || inString || inChar)
             {
                 if (inString || inChar)
                 {
@@ -130,6 +130,7 @@ namespace RecursiveFileProcessor.Kendo.Parser
                         inString = false;
                     }
                     objNameBuilder.Append(c);
+                    c = ParseNextChar();
                     continue;
                 }
 
@@ -137,6 +138,7 @@ namespace RecursiveFileProcessor.Kendo.Parser
                 {
                     inString = true;
                     objNameBuilder.Append(c);
+                    c = ParseNextChar();
                     continue;
                 }
 
@@ -144,26 +146,28 @@ namespace RecursiveFileProcessor.Kendo.Parser
                 {
                     inChar = true;
                     objNameBuilder.Append(c);
+                    c = ParseNextChar();
                     continue;
                 }
 
                 if (char.IsWhiteSpace(c))
                 {
-                    splitObject = true;
+                    c = ParseNextChar();
                     continue;
                 }
 
                 if (IsAcceptableCharacter(c))
                 {
-                    if (splitObject && !char.IsLetterOrDigit(c)) throw new Exception(string.Format("Invalid object name {0}", objNameBuilder));
+                    //if (splitObject && !char.IsLetterOrDigit(c)) throw new Exception(string.Format("Invalid object name {0}", objNameBuilder));
                     objNameBuilder.Append(c);
                 }
 
                 if (c == '.')
                 {
-                    splitObject = false;
+                    //splitObject = false;
                     ReadMethodCall(st);
                 }
+                c = ParseNextChar();
             }
 
             return objNameBuilder.ToString();
@@ -183,8 +187,11 @@ namespace RecursiveFileProcessor.Kendo.Parser
             var methodNameBuilder = new StringBuilder();
             char c;
             SkipWhitespace();
-            while ((c = ParseNextChar()) != '(' && c!='.' && c!=';' && c!=')')
+            while ((c = ParseNextChar()) != '(' && c!='.' && c!=';' && c!=')' && c!='}')
             {
+                if (char.IsWhiteSpace(c))
+                    continue;
+
                 if (IsAcceptableCharacter(c))
                 {
                     methodNameBuilder.Append(c);
@@ -194,7 +201,7 @@ namespace RecursiveFileProcessor.Kendo.Parser
                     throw new Exception(string.Format("Unexpected character {0} in method name", c));
                 }
             }
-            if (c == '.' || c==';' || c == ')') 
+            if (c == '.' || c==';' || c == ')' || c == '}')  
             {
                 mc.IsProperty = true;
                 _parsingIndex--;
@@ -283,8 +290,11 @@ namespace RecursiveFileProcessor.Kendo.Parser
                 }
             }
 
-            while (CurrentChar() != ')' && (c = ParseNextChar())!=')')
+            while (CurrentChar() != ')' || inChar || inString)
             {
+                c = ParseNextChar();
+                if (!inChar && !inString && CurrentChar() == ')') break;
+
                 if (inString || inChar)
                 {
                     if (c == '\\' && !nextCharEscaped)

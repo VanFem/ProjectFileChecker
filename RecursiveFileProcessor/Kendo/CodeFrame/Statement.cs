@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -27,15 +28,19 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
             
             if (MethodCalls.Count == 0) return strBuilder.ToString();
 
-            if (MethodCalls.Count == 1)
+            MethodCalls.ForEach(mc => mc.Indent = Indent + 1);
+            strBuilder.Append("." + MethodCalls[0]);
+            if (MethodCalls.Count > 1)
             {
-                strBuilder.Append(MethodCalls[0]);
-                return strBuilder.ToString();
+                if (!string.IsNullOrEmpty(Obj))
+                    strBuilder.Append(Environment.NewLine + Indenter.GetIndented(Indent + 1, "."));
+                strBuilder.Append(
+                    MethodCalls.GetRange(1, MethodCalls.Count-1).Select(mc => mc.ToString())
+                        .Aggregate(
+                            (working, next) =>
+                                working + Environment.NewLine + Indenter.GetIndented(Indent + 1, "." + next)));
             }
 
-            if (!string.IsNullOrEmpty(Obj)) strBuilder.Append(".");
-            strBuilder.Append(MethodCalls.Select(mc => mc.ToString()).Aggregate((working, next) => working + "." + next));
-            
             return strBuilder.ToString();
         }
     }

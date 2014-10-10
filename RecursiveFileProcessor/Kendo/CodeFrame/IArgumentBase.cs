@@ -2,5 +2,6 @@
 {
     public interface IArgumentBase
     {
+        int Indent { get; set; }
     }
 }

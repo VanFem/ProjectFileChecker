@@ -29,11 +29,22 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
         public static string PageSizeMethod = "PageSize";
         public static string IdMethod = "Id";
         public static string AddMethod = "Add";
+        public static string DataBindingMethod = "DataBinding";
+        public static string ClientEventsMethod = "ClientEvents";
+        public static string EventsMethod = "Events";
+        public static string OnErrorMethod = "OnError";
+        public static string ErrorMethod = "Error";
+        public static string EventsParamName = "events";
 
-        public static string ClientOperationMode = "GridOperationMode.Client";
+        public static string ClientOperationModeEnumName = "GridOperationMode.Client";
+        public static string ServerOperationModeEnumName = "GridOperationMode.Server";
 
         public static string DataSourceParamName = "dataSource";
         public static string ModelParamName = "model";
+
+        public static string FalseParameter = "false";
+        public static string TrueParameter = "true";
+
 
         
     }

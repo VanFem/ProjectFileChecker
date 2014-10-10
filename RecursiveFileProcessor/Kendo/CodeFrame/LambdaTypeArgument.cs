@@ -31,6 +31,7 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
             {
                 args = "(" + LambdaArguments.Aggregate((working, next) => working + ", " + next) + ")";
             }
+            LambdaBody.Indent = Indent;
             return string.Format(LambdaFormatString, args, LambdaBody);
         }
     }
