@@ -14,6 +14,7 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
 
         public List<Statement> Statements;
         public bool IsLambda { get; set; }
+        public int Indent { get; set; }
 
         public MethodBody(bool isLambda)
         {

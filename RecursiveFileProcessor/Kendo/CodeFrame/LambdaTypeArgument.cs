@@ -6,8 +6,9 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
     public class LambdaTypeArgument : IArgumentBase
     {
         private const string LambdaFormatString = "{0} => {1}";
-        public List<string> LambdaArguments { get; private set; }
+        public List<string> LambdaArguments { get; set; }
         public MethodBody LambdaBody { get; set; }
+        public int Indent { get; set; }
 
         public LambdaTypeArgument()
         {

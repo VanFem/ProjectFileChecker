@@ -10,10 +10,20 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
         public List<IArgumentBase> Arguments { get; private set; }
         public bool IsProperty { get; set; }
 
-        public MethodCall()
+
+        public MethodCall() : this(string.Empty, false)
+        {
+        }
+
+        public MethodCall(string methodName) : this(methodName, false)
+        {
+        }
+
+        public MethodCall(string methodName, bool isProperty)
         {
             Arguments = new List<IArgumentBase>();
-            IsProperty = false;
+            MethodName = methodName;
+            IsProperty = isProperty;
         }
 
         public override string ToString()
