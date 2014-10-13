@@ -50,7 +50,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
             st.MethodCalls.Add(mc2);
             st.MethodCalls.Add(mc3);
 
-            Assert.AreEqual("AmazingMethod(awesomeArgument).AnotherMethod().YetAnotherMethod(amazingArgument, coolAmazingArgument, notSoAmazingArgument)", 
+            Assert.AreEqual("AmazingMethod(awesomeArgument).AnotherMethod()\r\n\t.YetAnotherMethod(amazingArgument, coolAmazingArgument, notSoAmazingArgument)", 
                 st.ToString());
         }
 

@@ -113,7 +113,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse("AnObject.Method(arg => Object.Method())");
+            parser.Parse("AnObject.Method(arg => Object.Method());");
 
             Assert.AreEqual(1, parser.Code.Statements.Count);
             Assert.IsInstanceOf(typeof (Statement), parser.Code.Statements[0]);

@@ -7,13 +7,14 @@ using System.Linq.Expressions;
 using System.Runtime.Hosting;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using RecursiveFileProcessor.Kendo.CodeFrame;
 
 namespace RecursiveFileProcessor.Kendo.Parser
 {
     public class CodeParser
     {
-        public const string AcceptableCharacters = "=+-/*<>!";
+        public const string AcceptableCharacters = "=+-/*<>![]";
         public MethodBody Code { get; set; }
 
         public int _parsingIndex;
@@ -110,6 +111,8 @@ namespace RecursiveFileProcessor.Kendo.Parser
             bool splitObject = false;
             bool inString = false, inChar = false, nextCharEscaped = false;
             SkipWhitespace();
+            int inTypeDepth=0;
+            int inSquaresDepth = 0;
             char c = ParseNextChar();
             while ((c != ';') && (!inSingleStatement || (c != ',' && c != ')')) || inString || inChar)
             {
@@ -156,7 +159,7 @@ namespace RecursiveFileProcessor.Kendo.Parser
                     continue;
                 }
 
-                if (IsAcceptableCharacter(c))
+                if (IsAcceptableCharacter(c) || c == ',')
                 {
                     //if (splitObject && !char.IsLetterOrDigit(c)) throw new Exception(string.Format("Invalid object name {0}", objNameBuilder));
                     objNameBuilder.Append(c);
@@ -262,6 +265,14 @@ namespace RecursiveFileProcessor.Kendo.Parser
             throw new Exception(string.Format("Object initializer syntax invalid at `{0}`", _parsingText.Substring(_parsingIndex)));
         }
 
+        public int FindNextSquareBracketClosureIndex()
+        {
+            var currentIndex = _parsingIndex;
+            while (_parsingText[currentIndex] != ']' && currentIndex < _parsingText.Length) currentIndex++;
+            if (currentIndex >= _parsingText.Length) throw new Exception(string.Format("Did not find closing bracket from index {0}", _parsingIndex));
+            return currentIndex;
+        }
+
         public void ReadArgument(MethodCall mc)
         {
             var argBuilder = new StringBuilder();
@@ -270,12 +281,30 @@ namespace RecursiveFileProcessor.Kendo.Parser
             bool inString = false;
             bool inChar = false;
             int inTypeDepth=0;
+            int inSquaresDepth = 0;
 
-            if (_parsingText.Substring(_parsingIndex).Trim().StartsWith("new "))
+            while (_parsingText.Substring(_parsingIndex).Trim().StartsWith("new "))
             {   
                 _parsingIndex += _parsingText.Substring(_parsingIndex).IndexOf("new ", StringComparison.Ordinal) + 4;
                 SkipWhitespace();
-                if (NextParsedChar() == '{')
+                
+                Regex.IsMatch(_parsingText.Substring(_parsingIndex), @"^[\w\s\<\>\(\)]*\{");
+                
+
+                if (NextParsedChar() == '[')
+                {
+                    int startIndex = _parsingIndex;
+                    _parsingIndex = FindNextSquareBracketClosureIndex();
+                    _parsingIndex++;
+                    SkipWhitespace();
+                    int closureIndex = FindClosureIndex();
+                    mc.Arguments.Add(
+                        new StringArgument("new " +
+                                           _parsingText.Substring(startIndex, closureIndex - startIndex + 1)));
+                    _parsingIndex = closureIndex + 1;
+                    
+                } else 
+                    if (Regex.IsMatch(_parsingText.Substring(_parsingIndex), @"^[\w\s\<\>\(\)]*\{"))
                 {
                     int closureIndex = FindClosureIndex();
                     mc.Arguments.Add(
@@ -346,6 +375,13 @@ namespace RecursiveFileProcessor.Kendo.Parser
                     continue;
                 }
 
+                if (c == '[')
+                {
+                    inSquaresDepth++;
+                    argBuilder.Append(c);
+                    continue;
+                }
+
                 if (c == '<')
                 {
                     inTypeDepth++;
@@ -361,10 +397,19 @@ namespace RecursiveFileProcessor.Kendo.Parser
                     continue;
                 }
 
+                if (c == ']')
+                {
+                    inSquaresDepth--;
+                    if (inSquaresDepth < 0)
+                        throw new Exception(string.Format("Invalid type argument specification around {0}", argBuilder));
+                    argBuilder.Append(c);
+                    continue;
+                }
+
 
                 if (c == ',')
                 {
-                    if (inTypeDepth != 0)
+                    if (inTypeDepth != 0 || inSquaresDepth != 0)
                     {
                         argBuilder.Append(c);
                         continue;

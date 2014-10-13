@@ -98,6 +98,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
             var migration4 = new CRUDRename();
             var migration5 = new ClientEventsRemake();
             var migration6 = new PagerSettingsMovement();
+            var migration7 = new DefaultDataItemMovement();
             
             var logger = new Logger();
 
@@ -107,12 +108,21 @@ namespace FileProcessor.UnitTests.KendoParsingTests
             migration3.ApplyTo(parser.Code.Statements[0], logger);
             migration5.ApplyTo(parser.Code.Statements[0], logger);
             migration6.ApplyTo(parser.Code.Statements[0], logger);
-
+            migration7.ApplyTo(parser.Code.Statements[0], logger);
             parser.Code.PostfixComment = "kaban";
 
 
             Debug.WriteLine("=====AFTER=====\r\n");
             Debug.Write(parser.Code.ToString());
+        }
+
+
+        [Test]
+        public void TestTestTest2()
+        {
+            var parser = new CodeParser();
+            parser.Parse("Object[1,2]<type1,type2>.MethodOfAwesome(new List<object>, new [] { 1,2,3 } );");
+            Debug.Write(parser.Code);
         }
 
 
