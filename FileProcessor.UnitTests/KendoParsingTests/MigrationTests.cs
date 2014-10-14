@@ -21,7 +21,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse(@"Html.Kendo().Grid<Order>()
+            parser.ParseCode(@"Html.Kendo().Grid<Order>()
     .Name(""Grid"")       
     .DataKeys(dataKeys => dataKeys.Add(o => o.OrderID));
 ");
@@ -39,7 +39,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse(@"Html.Telerik().Grid<Order>()
+            parser.ParseCode(@"Html.Telerik().Grid<Order>()
     .Name(""Grid"")      
     .DataBinding(dataBinding => dataBinding.Ajax().Select(""_AjaxBinding"", ""Grid""));
 ");
@@ -56,7 +56,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse(@"@(Html.Kendo().Grid(Model.CurriculumMatrixViewModelList)
+            parser.ParseSingleStatement(@"@(Html.Kendo().Grid(Model.CurriculumMatrixViewModelList)
           .Name(""Curriculum"")
           .DataKeys(keys => keys.Add(pf => pf.Id))
           .DataBinding(db => db.Ajax()
@@ -89,9 +89,10 @@ namespace FileProcessor.UnitTests.KendoParsingTests
                                    .DefaultDataItem(new CurriculumMatrixCRViewModel { ProposalId = Model.ProposalId })
           )
           .Pageable(p => p.PageSize(5))
-          );
+          )
 ");
-            Debug.WriteLine("=====BEFORE=====\r\n"+parser.Code);
+            parser.Code.IsLambda = true;
+            Debug.WriteLine("=====BEFORE=====\r\n" + parser.Code);
             var migration = new DataBindingMovement();
             var migration2 = new DataKeysMovement();
             var migration3 = new OperationModeRemake();
@@ -99,6 +100,9 @@ namespace FileProcessor.UnitTests.KendoParsingTests
             var migration5 = new ClientEventsRemake();
             var migration6 = new PagerSettingsMovement();
             var migration7 = new DefaultDataItemMovement();
+            var migration8 = new CommandRenamingAndButtonTypeRemoval();
+            var migration9 = new GridEditModeChange();
+            var migration10 = new InsertRowPositionChange();
             
             var logger = new Logger();
 
@@ -109,8 +113,14 @@ namespace FileProcessor.UnitTests.KendoParsingTests
             migration5.ApplyTo(parser.Code.Statements[0], logger);
             migration6.ApplyTo(parser.Code.Statements[0], logger);
             migration7.ApplyTo(parser.Code.Statements[0], logger);
-            parser.Code.PostfixComment = "kaban";
+            migration8.ApplyTo(parser.Code.Statements[0], logger);
+            migration9.ApplyTo(parser.Code.Statements[0], logger);
+            migration10.ApplyTo(parser.Code.Statements[0], logger);
 
+
+            parser.Code.PostfixComment = HelperCommentMaker.GetHelperComment();
+            parser.Code.IsPlainStringComment = true;
+            parser.Code.Statements[0].SurroundInBrackets = true;
 
             Debug.WriteLine("=====AFTER=====\r\n");
             Debug.Write(parser.Code.ToString());
@@ -121,7 +131,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         public void TestTestTest2()
         {
             var parser = new CodeParser();
-            parser.Parse("Object[1,2]<type1,type2>.MethodOfAwesome(new List<object>, new [] { 1,2,3 } );");
+            parser.ParseCode("Object[1,2]<type1,type2>.MethodOfAwesome(new List<object>, new [] { 1,2,3 } );");
             Debug.Write(parser.Code);
         }
 

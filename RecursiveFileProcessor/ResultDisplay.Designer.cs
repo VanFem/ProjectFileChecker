@@ -93,7 +93,7 @@
             // 
             // resultEntryBindingSource
             // 
-            this.resultEntryBindingSource.DataSource = typeof(RecursiveFileProcessor.FileProcessor.ResultEntry);
+            this.resultEntryBindingSource.DataSource = typeof(ResultEntry);
             // 
             // ResultDisplay
             // 

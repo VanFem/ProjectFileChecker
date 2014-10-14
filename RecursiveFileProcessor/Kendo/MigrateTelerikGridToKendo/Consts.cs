@@ -37,21 +37,34 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
         public static string EventsParamName = "events";
         public static string Pageable = "Pageable";
         public static string TotalMethod = "Total";
+        public static string ToolBarMethod = "ToolBar";
+        public static string EditMethod = "Edit";
+        public static string ColumnsMethod = "Columns";
+        public static string CommandMethod = "Command";
+        public static string ButtonTypeMethod = "ButtonType";
         public static string EditableMethod = "Editable";
         public static string FieldMethod = "Field";
         public static string DefaultValueMethod = "DefaultValue";
+        public static string ModeMethod = "Mode";
+        public static string FormHtmlAttributesMethod = "FormHtmlAttributes";
 
         public static string ClientOperationModeEnumName = "GridOperationMode.Client";
         public static string ServerOperationModeEnumName = "GridOperationMode.Server";
+        public static string GridEditModeInForm = "GridEditMode.InForm";
+        public static string GridEditModePopUp = "GridEditMode.PopUp";
 
         public static string DataSourceParamName = "dataSource";
         public static string ModelParamName = "model";
         public static string InnerModelParamName = "m";
-        
+
 
         public static string FalseParameter = "false";
         public static string TrueParameter = "true";
 
+
         public static string ModelGlobal = "Model";
+
+
+        
     }
 }

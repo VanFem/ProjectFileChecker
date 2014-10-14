@@ -1,30 +1,30 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using System.Text;
 using System.Windows.Forms;
+using RecursiveFileProcessor.Kendo.Migration;
 
 namespace RecursiveFileProcessor
 {
     public partial class MainForm : Form
     {
         private readonly BackgroundWorker bw;
-        private FileProcessor _fileProcessor;
+        private string result;
+        private string _log;
+        private string _currentFile;
+        private MigrationProcessor _fileProcessor;
         private ResultDisplay _resultDisplay;
+        private MigrationSettings _migrationSettings;
 
         public MainForm()
         {
             InitializeComponent();
+            _migrationSettings = new MigrationSettings();
             bw = new BackgroundWorker {WorkerReportsProgress = true, WorkerSupportsCancellation = true};
-            cmbSort.Items.Add("File");
-            cmbSort.Items.Add("Length");
-            cmbSort.Enabled = false;
-            cmbSort.Visible = false;
-            lblSort.Visible = false;
-            btnViewResult.Enabled = false;
-            btnViewResult.Visible = false;
-            btnFeedToFile.Enabled = false;
-            btnFeedToFile.Visible = false;
+            button2.Text = "Process";
             bw.DoWork += bw_DoWork;
             bw.ProgressChanged += bw_ProgressChanged;
             bw.RunWorkerCompleted += bw_RunWorkerCompleted;
@@ -32,41 +32,50 @@ namespace RecursiveFileProcessor
 
         private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            txtCurrentFile.Text = _fileProcessor.CurrentFile;
+            txtCurrentFile.Text = string.Format("Processing {0}", _currentFile) ;
         }
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             MessageBox.Show("Done");
-            btnProcess.Text = "Process";
-            cmbSort.Enabled = true;
-            cmbSort.Visible = true;
-            lblSort.Visible = true;
-            btnFeedToFile.Enabled = true;
-            btnFeedToFile.Visible = true;
-            btnViewResult.Enabled = true;
-            btnViewResult.Visible = true;
             lblCurrentlyProcessing.Text = string.Empty;
-            txtCurrentFile.Text = string.Format("Processed {0} out of {1} scanned files in {2} directories", _fileProcessor.ProcessedFiles, _fileProcessor.ScannedFiles, _fileProcessor.ScannedDirectories);
+            File.WriteAllText("~migrationLog.txt", _log);
+            System.Diagnostics.Process.Start("~migrationLog.txt");
+            txtCurrentFile.Text = string.Empty;
         }
 
         private void bw_DoWork(object sender, DoWorkEventArgs e)
         {
-            _fileProcessor = new FileProcessor((int) numCharLimit.Value, bw, txtCheckedExtensions.Text,txtIgnoredExceptions.Text);
-            if (File.Exists(txtPath.Text))
+            _fileProcessor = new MigrationProcessor
             {
-                // This path is a file
-                _fileProcessor.ProcessFile(txtPath.Text);
-            }
-            else if (Directory.Exists(txtPath.Text))
+                AppliedMigration = _migrationSettings.DialogResult == DialogResult.OK
+                    ? _migrationSettings.GetMigration()
+                    : _migrationSettings.GetFullMigration()
+            };
+
+            var logStringBuilder = new StringBuilder();
+
+            foreach (var fileName in openFileDialog1.FileNames)
             {
-                // This path is a directory
-                _fileProcessor.ProcessDirectory(txtPath.Text);
+                logStringBuilder.Append(_fileProcessor.ProcessFile(fileName));
             }
-            else
-            {
-                MessageBox.Show(String.Format("{0} is not a valid file or directory.", txtPath.Text));
-            }
+
+            _log = logStringBuilder.ToString();
+
+            //if (File.Exists(txtPath.Text))
+            //{
+            //    // This path is a file
+            //    _fileProcessor.ProcessFile(txtPath.Text);
+            //}
+            //else if (Directory.Exists(txtPath.Text))
+            //{
+            //    // This path is a directory
+            //    _fileProcessor.ProcessDirectory(txtPath.Text);
+            //}
+            //else
+            //{
+            //    MessageBox.Show(String.Format("{0} is not a valid file or directory.", txtPath.Text));
+            //}
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -92,7 +101,7 @@ namespace RecursiveFileProcessor
             {
                 bw.RunWorkerAsync();
                 lblCurrentlyProcessing.Text = "Currently processing:";
-                btnProcess.Text = "Cancel";
+                button2.Text = "Cancel";
             }
             else
             {
@@ -120,37 +129,13 @@ namespace RecursiveFileProcessor
                     frm.Close();
                 }
             }
-            new ResultDisplay(_fileProcessor).Show();
+
+            
         }
 
-        private void btnFeedToFile_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.DialogResult saveFileRes = saveFileDialog1.ShowDialog();
-            if (saveFileRes == DialogResult.OK)
-            {
-                using (var f = new StreamWriter(saveFileDialog1.FileName))
-                {
-                    foreach (var res in _fileProcessor.ProcessingResult)
-                    {
-                        f.WriteLine("File: {0} Length:{2}\nLine: {1} :{3}\n", res.filePath, res.lineNumber, res.lineLength, res.line);
-                    }
-                }
-            }
-        }
-
-        private void cmbSort_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cmbSort.SelectedIndex == 0)
-            {
-                _fileProcessor.ProcessingResult.Sort(
-                    (p1, p2) => String.Compare(p1.filePath, p2.filePath, StringComparison.Ordinal));
-            }
-            else
-            {
-                _fileProcessor.ProcessingResult.Sort(
-                    (p1, p2) => p2.lineLength.CompareTo(p1.lineLength));
-            }
-
+            _migrationSettings.ShowDialog();
         }
 
     }

@@ -13,10 +13,6 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
 {
     public class DefaultDataItemMovement : IMigrationRule
     {
-
-        private string _text;
-        private int _index;
-
         private const string MigrationPrefix = "DefaultDataItemMovement";
 
         public void ApplyTo(Statement statement, Logger log)
@@ -32,8 +28,6 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     return;
                 }
 
-
-
                 if (statement[Consts.EditableMethod].Arguments.Count == 0
                     || !(statement[Consts.EditableMethod].Arguments[0] is LambdaTypeArgument)
                     || (statement[Consts.EditableMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements.All(st => st[Consts.DefaultDataItemMethod] == null)
@@ -47,12 +41,10 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                 var defaultDataItemDefinition = (statement[Consts.EditableMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements.First(
                         st => st[Consts.DefaultDataItemMethod] != null)[Consts.DefaultDataItemMethod].Arguments[0];
 
-                _index = 0;
                 var match = Regex.Match(defaultDataItemDefinition.ToString(), @"new\s+[\w\(\)\<\>\,]+");
                 if (match.Success)
                 {
-                    //TODO
-                    //VMName == match.Value.Substring(4)
+                    HelperCommentMaker.ViewModelName = match.Value.Substring(4);
                 }
 
                 if (defaultDataItemDefinition.ToString().Contains('{'))
@@ -60,12 +52,12 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     var propertyList = new List<string>();
                     var initializerList = new List<string>();
                     var str =
-                            defaultDataItemDefinition.ToString()
-                                .Substring(defaultDataItemDefinition.ToString().IndexOf('{'));
+                        defaultDataItemDefinition.ToString()
+                            .Substring(defaultDataItemDefinition.ToString().IndexOf('{'));
                     bool over = false;
                     while (!over)
                     {
-                        
+
                         if (str.Length == 1)
                             throw new MigrationException(
                                 string.Format("{0}: Wrong parameters in object initializer", MigrationPrefix), null);
@@ -75,10 +67,10 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                             throw new MigrationException(
                                 string.Format("{0}: Wrong parameters in object initializer", MigrationPrefix), null);
 
-                        propertyList.Add(str.Substring(0, str.IndexOf('=')));
+                        propertyList.Add(str.Substring(0, str.IndexOf('=')).Trim());
                         str = str.Substring(str.IndexOf('=') + 1);
                         var closureIndex = GetClosureIndex(str, 0);
-                        initializerList.Add(str.Substring(0, closureIndex));
+                        initializerList.Add(str.Substring(0, closureIndex).Trim());
                         if (str[closureIndex] == '}')
                             over = true;
                     }
@@ -88,15 +80,20 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     for (int i = 0; i < propertyList.Count; i++)
                     {
                         var modelDefinitionCall = new MethodCall(Consts.ModelMethod);
+
+                        var modelFirstLambda = new LambdaTypeArgument();
+                        modelFirstLambda.LambdaArguments.Add(Consts.ModelParamName);
                         var st = new Statement {Obj = Consts.ModelParamName}; // Model(model => [model].Field( ... ) 
                         var fieldMethodCall = new MethodCall(Consts.FieldMethod); // [Field(m => m.FieldName)]
-                        var fieldMethodArgs = new LambdaTypeArgument(); // [m] => m.FieldName
+                        var fieldMethodArgs = new LambdaTypeArgument(); // [m => m.FieldName]
 
-                        var fieldSelectCall = new MethodCall(propertyList[i]); // m => m[.FieldName]
-                        var fieldSelectStatement = new Statement { Obj = Consts.InnerModelParamName }; // m => [m.FieldName]
+                        var fieldSelectCall = new MethodCall(propertyList[i]) { IsProperty = true };  // m => m[.FieldName]
+                        var fieldSelectStatement = new Statement {Obj = Consts.InnerModelParamName};
+                        // m => [m.FieldName]
                         fieldSelectStatement.MethodCalls.Add(fieldSelectCall);
 
-                        fieldMethodArgs.LambdaArguments = new List<string> { Consts.InnerModelParamName }; // [m] => m.FieldName
+                        fieldMethodArgs.LambdaArguments = new List<string> {Consts.InnerModelParamName};
+                        // [m] => m.FieldName
                         fieldMethodArgs.LambdaBody = new MethodBody(true) // Field(m => [m.FieldName])
                         {
                             Statements = new List<Statement>
@@ -106,26 +103,29 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                         };
 
                         fieldMethodCall.Arguments.Add(fieldMethodArgs);
-
-
-
-
-
-                        
-
-
-                        var lta = new LambdaTypeArgument();
-                        lta.LambdaArguments = new List<string> {Consts.ModelParamName};
+                        st.MethodCalls.Add(fieldMethodCall);
+                        var defaultValueCall = new MethodCall(Consts.DefaultValueMethod);
+                        defaultValueCall.Arguments.Add(new StringArgument(initializerList[i]));
+                        st.MethodCalls.Add(defaultValueCall);
+                        modelFirstLambda.LambdaBody.Statements.Add(st);
+                        modelDefinitionCall.Arguments.Add(modelFirstLambda);
+                        (statement[Consts.DataSourceMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0].MethodCalls.Add(modelDefinitionCall);
+                        log.Log(string.Format("Added initializer `{0}` for property `{1}`.", initializerList[i], propertyList[i]));
                     }
-
-
-
-
                 }
-                
 
-                
-               
+                foreach (
+                    var st in
+                        (statement[Consts.EditableMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements)
+                {
+                    if (st[Consts.DefaultDataItemMethod] != null)
+                    {
+                        st.MethodCalls.Remove(st[Consts.DefaultDataItemMethod]);
+                    }
+                    log.Log(string.Format("Removing {0} from statement {1}", Consts.DefaultDataItemMethod, st));
+                }
+
+
 
 
                 log.EndLog("Successfully applied migration patch");
@@ -146,6 +146,11 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
             while (index < str.Length && ((c != ',' && c != '}') || inString || inChar || (argDepth > 0)))
             {
                 c = str[index];
+                if ((c == ',' || c == '}') && !inString && !inChar && (argDepth == 0))
+                {
+                    break;
+                }
+
                 if (inString || inChar)
                 {
                     if (c == '\\' && !nextCharEscaped)

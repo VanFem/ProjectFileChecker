@@ -27,14 +27,18 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
 
                 if (statement[Consts.ClientEventsMethod].Arguments.Count == 0
                     || !(statement[Consts.ClientEventsMethod].Arguments[0] is LambdaTypeArgument)
-                    || (statement[Consts.ClientEventsMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements.Count == 0)
+                    ||
+                    (statement[Consts.ClientEventsMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements
+                        .Count == 0)
                 {
                     log.EndLog(string.Format("Arguments for {0} seem invalid", Consts.ClientEventsMethod));
                     return;
                 }
 
-                var eventDefinitions = (statement[Consts.ClientEventsMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0];
-                 
+                var eventDefinitions =
+                    (statement[Consts.ClientEventsMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[
+                        0];
+
                 log.Log("Found event definitions");
 
 
@@ -55,14 +59,16 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                             Statements = new List<Statement> {new Statement {Obj = Consts.EventsParamName}}
                         }
                     });
-                    (eventsCall.Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0].MethodCalls.Add(errorMethod);
+                    (eventsCall.Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0].MethodCalls.Add(
+                        errorMethod);
                     DataSourceCreator.CreateDataSourceIfNoneOrInvalid(statement);
                     errorMethod.MethodName = Consts.ErrorMethod;
-                    (statement[Consts.DataSourceMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0].MethodCalls.Add(eventsCall);
+                    (statement[Consts.DataSourceMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0]
+                        .MethodCalls.Add(eventsCall);
                     eventDefinitions.MethodCalls.Remove(errorMethod);
                 }
 
-                
+
 
                 eventDefinitions.MethodCalls.ForEach(mc =>
                 {

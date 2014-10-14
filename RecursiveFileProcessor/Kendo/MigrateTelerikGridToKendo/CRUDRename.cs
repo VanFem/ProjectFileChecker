@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using RecursiveFileProcessor.Kendo.CodeFrame;
 using RecursiveFileProcessor.Kendo.Migration;
 
@@ -37,6 +38,24 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     {
                         log.LogEntries.Add("\t"+MigrationPrefix + string.Format("Renaming {0} method in {2} to {1}", Consts.SelectMethod, Consts.ReadMethod, Consts.DataBindingMethod));
                         tmpSt.MethodName = Consts.ReadMethod;
+                        if (tmpSt.Arguments.Count > 0)
+                        {
+                            var rOp = tmpSt.Arguments[0].ToString();
+                            if (rOp.StartsWith("\"") && rOp.EndsWith("\"") && rOp.Length > 1)
+                            {
+                                rOp = rOp.Substring(1, rOp.Length - 2);
+                                HelperCommentMaker.ReadOperation = rOp;
+                            }
+                        }
+                        if (tmpSt.Arguments.Count > 1)
+                        {
+                            var controller = tmpSt.Arguments[1].ToString();
+                            if (controller.StartsWith("\"") && controller.EndsWith("\"") && controller.Length > 1)
+                            {
+                                controller = controller.Substring(1, controller.Length - 2);
+                                HelperCommentMaker.Controller = controller;
+                            }
+                        }
                     }
 
                     tmpSt = (statement[Consts.DataBindingMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0
@@ -45,6 +64,15 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     {
                         log.LogEntries.Add("\t" + MigrationPrefix + string.Format("Renaming {0} method in {2} to {1}", Consts.InsertMethod, Consts.CreateMethod, Consts.DataBindingMethod));
                         tmpSt.MethodName = Consts.CreateMethod;
+                        if (tmpSt.Arguments.Count > 0)
+                        {
+                            var cOp = tmpSt.Arguments[0].ToString();
+                            if (cOp.StartsWith("\"") && cOp.EndsWith("\"") && cOp.Length > 1)
+                            {
+                                cOp = cOp.Substring(1, cOp.Length - 2);
+                                HelperCommentMaker.CreateOperation = cOp;
+                            }
+                        }
                     }
 
                     tmpSt = (statement[Consts.DataBindingMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0
@@ -53,6 +81,30 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     {
                         log.LogEntries.Add("\t" + MigrationPrefix + string.Format("Renaming {0} method in {2} to {1}", Consts.DeleteMethod, Consts.DestroyMethod, Consts.DataBindingMethod));
                         tmpSt.MethodName = Consts.DestroyMethod;
+                        if (tmpSt.Arguments.Count > 0)
+                        {
+                            var dOp = tmpSt.Arguments[0].ToString();
+                            if (dOp.StartsWith("\"") && dOp.EndsWith("\"") && dOp.Length > 1)
+                            {
+                                dOp = dOp.Substring(1, dOp.Length - 2);
+                                HelperCommentMaker.DestroyOperation = dOp;
+                            }
+                        }
+                    }
+
+                    tmpSt = (statement[Consts.DataBindingMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0
+                           ].MethodCalls.SingleOrDefault(mc => mc.MethodName == Consts.UpdateMethod);
+                    if (tmpSt != null)
+                    {
+                        if (tmpSt.Arguments.Count > 0)
+                        {
+                            var uOp = tmpSt.Arguments[0].ToString();
+                            if (uOp.StartsWith("\"") && uOp.EndsWith("\"") && uOp.Length > 1)
+                            {
+                                uOp = uOp.Substring(1, uOp.Length - 2);
+                                HelperCommentMaker.UpdateOperation = uOp;
+                            }
+                        }
                     }
                 }
 
@@ -68,6 +120,24 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     {
                         log.LogEntries.Add("\t" + MigrationPrefix + string.Format("Renaming {0} method in {2} to {1}", Consts.SelectMethod, Consts.ReadMethod, Consts.DataSourceMethod));
                         tmpSt.MethodName = Consts.ReadMethod;
+                        if (tmpSt.Arguments.Count > 0)
+                        {
+                            var rOp = tmpSt.Arguments[0].ToString();
+                            if (rOp.StartsWith("\"") && rOp.EndsWith("\"") && rOp.Length > 1)
+                            {
+                                rOp = rOp.Substring(1, rOp.Length - 2);
+                                HelperCommentMaker.ReadOperation = rOp;
+                            }
+                        }
+                        if (tmpSt.Arguments.Count > 1)
+                        {
+                            var controller = tmpSt.Arguments[1].ToString();
+                            if (controller.StartsWith("\"") && controller.EndsWith("\"") && controller.Length > 1)
+                            {
+                                controller = controller.Substring(1, controller.Length - 2);
+                                HelperCommentMaker.Controller = controller;
+                            }
+                        }
                     }
 
                     tmpSt = (statement[Consts.DataSourceMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0
@@ -76,6 +146,15 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     {
                         log.LogEntries.Add("\t" + MigrationPrefix + string.Format("Renaming {0} method in {2} to {1}", Consts.InsertMethod, Consts.CreateMethod, Consts.DataSourceMethod));
                         tmpSt.MethodName = Consts.CreateMethod;
+                        if (tmpSt.Arguments.Count > 0)
+                        {
+                            var cOp = tmpSt.Arguments[0].ToString();
+                            if (cOp.StartsWith("\"") && cOp.EndsWith("\"") && cOp.Length > 1)
+                            {
+                                cOp = cOp.Substring(1, cOp.Length - 2);
+                                HelperCommentMaker.CreateOperation = cOp;
+                            }
+                        }
                     }
 
                     tmpSt = (statement[Consts.DataSourceMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0
@@ -84,6 +163,30 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     {
                         log.LogEntries.Add("\t" + MigrationPrefix + string.Format("Renaming {0} method in {2} to {1}", Consts.DeleteMethod, Consts.DestroyMethod, Consts.DataSourceMethod));
                         tmpSt.MethodName = Consts.DestroyMethod;
+                        if (tmpSt.Arguments.Count > 0)
+                        {
+                            var dOp = tmpSt.Arguments[0].ToString();
+                            if (dOp.StartsWith("\"") && dOp.EndsWith("\"") && dOp.Length > 1)
+                            {
+                                dOp = dOp.Substring(1, dOp.Length - 2);
+                                HelperCommentMaker.DestroyOperation = dOp;
+                            }
+                        }
+                    }
+
+                    tmpSt = (statement[Consts.DataSourceMethod].Arguments[0] as LambdaTypeArgument).LambdaBody.Statements[0
+                           ].MethodCalls.SingleOrDefault(mc => mc.MethodName == Consts.UpdateMethod);
+                    if (tmpSt != null)
+                    {
+                        if (tmpSt.Arguments.Count > 0)
+                        {
+                            var uOp = tmpSt.Arguments[0].ToString();
+                            if (uOp.StartsWith("\"") && uOp.EndsWith("\"") && uOp.Length > 1)
+                            {
+                                uOp = uOp.Substring(1, uOp.Length - 2);
+                                HelperCommentMaker.UpdateOperation = uOp;
+                            }
+                        }
                     }
                 }
                 log.LogEntries.Add(MigrationPrefix + "Successfully applied migration patch");

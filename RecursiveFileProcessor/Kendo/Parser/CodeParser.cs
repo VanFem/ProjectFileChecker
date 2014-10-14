@@ -14,7 +14,7 @@ namespace RecursiveFileProcessor.Kendo.Parser
 {
     public class CodeParser
     {
-        public const string AcceptableCharacters = "=+-/*<>![]";
+        public const string AcceptableCharacters = "=+-/*<>![]@";
         public MethodBody Code { get; set; }
 
         public int _parsingIndex;
@@ -28,13 +28,23 @@ namespace RecursiveFileProcessor.Kendo.Parser
             Code = new MethodBody(false);
         }
 
-        public void Parse(string text)
+        public void ParseCode(string text)
         {
             Code = new MethodBody(false);
             if (string.IsNullOrEmpty(text)) return;
             _parsingText = text;
             _parsingIndex = 0;
             ReadMethodBody(Code, false);
+        }
+
+        public Statement ParseSingleStatement(string text)
+        {
+            Code = new MethodBody(false);
+            if (string.IsNullOrEmpty(text)) return new Statement();
+            _parsingText = text;
+            _parsingIndex = 0;
+            Code.Statements.Add(ReadStatement(true));
+            return Code.Statements[0];
         }
 
         public void ReadMethodBody(MethodBody mb, bool inSingleStatement)

@@ -14,6 +14,7 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
 
         public List<Statement> Statements;
         public string PostfixComment { get; set; }
+        public bool IsPlainStringComment { get; set; }
         
         public bool IsLambda { get; set; }
         public int Indent { get; set; }
@@ -33,9 +34,10 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
             if (!IsLambda || Statements.Count > 1)
             {
                 body = "{"+Environment.NewLine + body + ";"+ Environment.NewLine + Indenter.GetIndented((Indent == 0 ? 0 : (Indent - 1)), "}");
-                if (!string.IsNullOrEmpty(PostfixComment))
-                    body += Environment.NewLine + "/*" + PostfixComment + "*/";
             }
+
+            if (!string.IsNullOrEmpty(PostfixComment))
+                body += Environment.NewLine + (IsPlainStringComment ? "" : "/*") + PostfixComment + (IsPlainStringComment ? "" : "*/");
 
             return body;
         }

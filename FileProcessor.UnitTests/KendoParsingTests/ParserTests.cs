@@ -20,7 +20,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse("");
+            parser.ParseCode("");
 
             Assert.AreEqual(0, parser.Code.Statements.Count);
         }
@@ -30,7 +30,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse("AnObject;");
+            parser.ParseCode("AnObject;");
 
             Assert.AreEqual(1, parser.Code.Statements.Count);
             Assert.IsInstanceOf(typeof (Statement), parser.Code.Statements[0]);
@@ -42,7 +42,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse("AnObject.Method();");
+            parser.ParseCode("AnObject.Method();");
 
             Assert.AreEqual(1, parser.Code.Statements.Count);
 
@@ -60,7 +60,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse("AnObject.Method(argument1, argument2);");
+            parser.ParseCode("AnObject.Method(argument1, argument2);");
 
             Assert.AreEqual(1, parser.Code.Statements.Count);
 
@@ -84,7 +84,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse("AnObject.Method1(argument1).Method2(argument1,argument2);");
+            parser.ParseCode("AnObject.Method1(argument1).Method2(argument1,argument2);");
 
             Assert.AreEqual(1, parser.Code.Statements.Count);
             Assert.IsInstanceOf(typeof (Statement), parser.Code.Statements[0]);
@@ -113,7 +113,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
         {
             var parser = new CodeParser();
 
-            parser.Parse("AnObject.Method(arg => Object.Method());");
+            parser.ParseCode("AnObject.Method(arg => Object.Method());");
 
             Assert.AreEqual(1, parser.Code.Statements.Count);
             Assert.IsInstanceOf(typeof (Statement), parser.Code.Statements[0]);
@@ -137,7 +137,7 @@ namespace FileProcessor.UnitTests.KendoParsingTests
             //    parser.Parse("Object.Hello(a,(a,b)=>abc);");
             // parser.Parse("Object.Hello(a,(a,b)=>{abc;});");
             //parser.Parse("Object.Hello(a,(a,b)=>{abc; abd;});");
-            parser.Parse(@"db.Programs.Where(
+            parser.ParseCode(@"db.Programs.Where(
                 p => programIdList.Contains(p.ProposalId))
                 .OrderBy(p => p.Title)
                 .Select(p => p.Proposal)

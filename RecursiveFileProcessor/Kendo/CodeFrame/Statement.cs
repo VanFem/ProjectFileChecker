@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Odbc;
 using System.Linq;
 using System.Text;
 
@@ -7,7 +8,13 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
 {
     public class Statement : IMethodStatement
     {
+        private const string RazorCommentFormat = "@*{0}*@";
+        private const string CCommentFormat = "/*{0}*/";
+        private const string BracketFormat = "({0})";
+
+
         public string Obj { get; set; }
+        public bool SurroundInBrackets { get; set; }
 
         public MethodCall this[string val]
         {
@@ -16,6 +23,8 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
 
         public List<MethodCall> MethodCalls { get; private set; }
         public int Indent { get; set; }
+        public string Comment { get; set; }
+        public bool IsRazorComment { get; set; }
 
         public Statement()
         {
@@ -25,7 +34,6 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
         public override string ToString()
         {
             var strBuilder = string.IsNullOrEmpty(Obj) ? new StringBuilder() : new StringBuilder(Obj);
-            
             if (MethodCalls.Count == 0) return strBuilder.ToString();
 
             MethodCalls.ForEach(mc => mc.Indent = Indent + 1);
@@ -49,9 +57,16 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
                     }
                     else
                     {
+                        if (SurroundInBrackets)
+                            strBuilder = new StringBuilder(string.Format(BracketFormat, strBuilder));
+
+
+                        if (string.IsNullOrEmpty(Comment)) return strBuilder.ToString();
+
+                        strBuilder.Append(Environment.NewLine);
+                        strBuilder.AppendFormat(IsRazorComment ? RazorCommentFormat : CCommentFormat, Comment);
                         return strBuilder.ToString();
                     }
-                    
                 }
                 strBuilder.Append(
                     MethodCalls.GetRange(startRange, MethodCalls.Count - startRange).Select(mc => mc.ToString())
@@ -60,6 +75,14 @@ namespace RecursiveFileProcessor.Kendo.CodeFrame
                                 working + Environment.NewLine + Indenter.GetIndented(Indent + 1, "." + next)));
             }
 
+            if (SurroundInBrackets) 
+                strBuilder = new StringBuilder(string.Format(BracketFormat, strBuilder));
+                
+
+            if (string.IsNullOrEmpty(Comment)) return strBuilder.ToString();
+
+            strBuilder.Append(Environment.NewLine);
+            strBuilder.AppendFormat(IsRazorComment ? RazorCommentFormat : CCommentFormat, Comment);
             return strBuilder.ToString();
         }
     }

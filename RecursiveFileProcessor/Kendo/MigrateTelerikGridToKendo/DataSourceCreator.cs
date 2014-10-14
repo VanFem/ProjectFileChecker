@@ -19,6 +19,11 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                 args.LambdaArguments.Add(Consts.DataSourceParamName);
                 args.LambdaBody.Statements.Add(new Statement() {Obj = Consts.DataSourceParamName});
                 mc.Arguments.Add(args);
+                if (st[Consts.DataSourceMethod] != null)
+                {
+                    st.MethodCalls.Remove(st[Consts.DataSourceMethod]);
+                }
+                st.MethodCalls.Add(mc);
             }
         }
     }

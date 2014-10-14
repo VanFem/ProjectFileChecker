@@ -11,15 +11,6 @@ namespace RecursiveFileProcessor
 {
     public class FileProcessor
     {
-        public class ResultEntry
-        {
-            public string filePath { get; set; }
-            public int lineNumber { get; set; }
-            public int lineLength { get; set; }
-            public string line { get; set; }
-            
-        }
-
         public string CurrentFile { get; private set; }
 
         public int CharLimit { get; set; }
@@ -136,7 +127,7 @@ namespace RecursiveFileProcessor
             }
             catch (Exception ex)
             {
-                ProcessingResult.Add(new ResultEntry(){filePath = path, line = ex.Message});
+                ProcessingResult.Add(new ResultEntry {filePath = path, line = ex.Message});
             }
             ProcessedFiles++;
         }
