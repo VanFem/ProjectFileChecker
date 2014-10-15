@@ -293,9 +293,9 @@ namespace RecursiveFileProcessor.Kendo.Parser
             int inTypeDepth=0;
             int inSquaresDepth = 0;
 
-            while (_parsingText.Substring(_parsingIndex).Trim().StartsWith("new "))
+            while (_parsingText.Substring(_parsingIndex).Trim().StartsWith("new ") || _parsingText.Substring(_parsingIndex).Trim().StartsWith("new["))
             {   
-                _parsingIndex += _parsingText.Substring(_parsingIndex).IndexOf("new ", StringComparison.Ordinal) + 4;
+                _parsingIndex += _parsingText.Substring(_parsingIndex).IndexOf("new", StringComparison.Ordinal) + 3;
                 SkipWhitespace();
                 
                 Regex.IsMatch(_parsingText.Substring(_parsingIndex), @"^[\w\s\<\>\(\)]*\{");
@@ -314,7 +314,7 @@ namespace RecursiveFileProcessor.Kendo.Parser
                     _parsingIndex = closureIndex + 1;
                     
                 } else 
-                    if (Regex.IsMatch(_parsingText.Substring(_parsingIndex), @"^[\w\s\<\>\(\)]*\{"))
+                    if (Regex.IsMatch(_parsingText.Substring(_parsingIndex), @"^[\w\s\<\>\(\)\[\]]*\{"))
                 {
                     int closureIndex = FindClosureIndex();
                     mc.Arguments.Add(

@@ -17,7 +17,8 @@ namespace RecursiveFileProcessor.Kendo.Migration
 
         public string ProcessFile(string filePath)
         {
-            var text = new StringBuilder(File.ReadAllText(filePath));
+            var text = new StringBuilder(File.ReadAllText(filePath, Encoding.UTF8));
+            File.WriteAllText(filePath+".~bk", text.ToString());
             var grids = GridSearcher.GetGridList(text.ToString());
             var helperComments = new List<string>();
             var newGrids = new List<string>();
@@ -48,10 +49,11 @@ namespace RecursiveFileProcessor.Kendo.Migration
 
             foreach (var hs in helperComments)
             {
+                text.Append(Environment.NewLine);
                 text.Append(hs);
             }
-            
-            File.WriteAllText(filePath, text.ToString());
+
+            File.WriteAllText(filePath, text.ToString(), Encoding.UTF8);
             return result.ToString();
         }
 

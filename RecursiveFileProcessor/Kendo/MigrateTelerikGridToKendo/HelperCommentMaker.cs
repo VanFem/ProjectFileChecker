@@ -21,10 +21,11 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
 
         public static string GetHelperComment()
         {
-            if (string.IsNullOrEmpty(EntityName) && !string.IsNullOrEmpty(ViewModelName) &&
-                ViewModelName.EndsWith(ViewModelPostfix))
+            if (!string.IsNullOrEmpty(ViewModelName))
             {
-                EntityName = ViewModelName.Substring(0, ViewModelName.Length - ViewModelPostfix.Length);
+                EntityName = ViewModelName.EndsWith(ViewModelPostfix)
+                    ? ViewModelName.Substring(0, ViewModelName.Length - ViewModelPostfix.Length)
+                    : string.Format("[{0}_KABAN]", ViewModelName);
             }
 
             if (string.IsNullOrEmpty(EntityName) || 

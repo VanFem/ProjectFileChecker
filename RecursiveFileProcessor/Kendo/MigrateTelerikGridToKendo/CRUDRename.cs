@@ -38,6 +38,7 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     {
                         log.LogEntries.Add("\t"+MigrationPrefix + string.Format("Renaming {0} method in {2} to {1}", Consts.SelectMethod, Consts.ReadMethod, Consts.DataBindingMethod));
                         tmpSt.MethodName = Consts.ReadMethod;
+                        if (tmpSt.Arguments.Count < 3) tmpSt.Arguments.Add(new StringArgument("new {id = Model.ProposalId}"));
                         if (tmpSt.Arguments.Count > 0)
                         {
                             var rOp = tmpSt.Arguments[0].ToString();
@@ -120,6 +121,7 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     {
                         log.LogEntries.Add("\t" + MigrationPrefix + string.Format("Renaming {0} method in {2} to {1}", Consts.SelectMethod, Consts.ReadMethod, Consts.DataSourceMethod));
                         tmpSt.MethodName = Consts.ReadMethod;
+                        if (tmpSt.Arguments.Count < 3) tmpSt.Arguments.Add(new StringArgument("new {id = Model.ProposalId}"));
                         if (tmpSt.Arguments.Count > 0)
                         {
                             var rOp = tmpSt.Arguments[0].ToString();

@@ -32,7 +32,7 @@ namespace RecursiveFileProcessor
 
         private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            txtCurrentFile.Text = string.Format("Processing {0}", _currentFile) ;
+            txtCurrentFile.Text = string.Format("Processing {0}", _currentFile);
         }
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

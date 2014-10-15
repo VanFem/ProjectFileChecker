@@ -71,6 +71,16 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                         var lst = (cd.Arguments[0] as LambdaTypeArgument).LambdaBody.Statements;
                         foreach (var st in lst)
                         {
+                            if (st[Consts.ClientTemplateMethod] != null)
+                            {
+                                if (st[Consts.ClientTemplateMethod].Arguments.Count > 0 &&
+                                    st[Consts.ClientTemplateMethod].Arguments[0] is StringArgument)
+                                {
+                                    var str = (st[Consts.ClientTemplateMethod].Arguments[0] as StringArgument).ToString();
+                                    st[Consts.ClientTemplateMethod].Arguments[0] = new StringArgument(str.Replace("#", "##").Replace("<##=", "#=").Replace("##>", "#"));
+                                }
+                            }
+
                             if (st[Consts.CommandMethod] != null)
                             {
                                 var commandDefinitions =

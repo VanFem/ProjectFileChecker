@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using RecursiveFileProcessor.Kendo.CodeFrame;
 using RecursiveFileProcessor.Kendo.Migration;
 
@@ -79,9 +80,17 @@ namespace RecursiveFileProcessor.Kendo.MigrateTelerikGridToKendo
                     }
                 });
 
-                log.Log(string.Format("Renaming {0} into {1}", Consts.ClientEventsMethod, Consts.EventsMethod));
-
-                statement[Consts.ClientEventsMethod].MethodName = Consts.EventsMethod;
+                
+                if (eventDefinitions.MethodCalls.Count == 0)
+                {
+                    statement.MethodCalls.Remove(statement[Consts.ClientEventsMethod]);
+                    log.Log(string.Format("Removing empty `{0}` method", Consts.ClientEventsMethod));
+                }
+                else
+                {
+                    statement[Consts.ClientEventsMethod].MethodName = Consts.EventsMethod;
+                    log.Log(string.Format("Renaming {0} into {1}", Consts.ClientEventsMethod, Consts.EventsMethod));
+                }
 
                 log.EndLog("Successfully applied migration patch");
 
